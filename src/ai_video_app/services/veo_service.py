@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 import time
 from pathlib import Path
 from typing import Any
@@ -54,6 +53,7 @@ class VeoService:
             file_resource.save(str(output_path))
 
             return GeneratedVideo(
+                run_id=request.run_id,
                 provider="veo",
                 local_path=output_path,
                 remote_url=getattr(file_resource, "uri", None),
@@ -157,21 +157,10 @@ class VeoService:
 
     def _build_output_path(self, request: VideoGenerationRequest) -> Path:
         """Create safe output file path inside configured output directory."""
-        self._config.video_output_dir.mkdir(parents=True, exist_ok=True)
+        output_path = request.output_path or (self._config.video_output_dir / f"{request.run_id}.mp4")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        if request.output_name:
-            filename = request.output_name
-        else:
-            prompt_slug = self._slugify(request.prompt)[:60] or "veo-video"
-            timestamp = int(time.time())
-            filename = f"{prompt_slug}-{timestamp}.mp4"
+        if output_path.suffix.lower() != ".mp4":
+            output_path = output_path.with_suffix(".mp4")
 
-        if not filename.endswith(".mp4"):
-            filename = f"{filename}.mp4"
-
-        return self._config.video_output_dir / filename
-
-    def _slugify(self, value: str) -> str:
-        """Convert prompt into short filesystem-safe slug."""
-        cleaned = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower())
-        return cleaned.strip("-")
+        return output_path

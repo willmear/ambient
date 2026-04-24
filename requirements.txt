@@ -1,3 +1,4 @@
 google-genai
+moviepy>=1.0.3,<3
 Pillow>=10,<12
 python-dotenv==1.2.1

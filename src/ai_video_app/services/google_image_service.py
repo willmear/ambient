@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import re
-import time
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +41,7 @@ class GoogleImageService:
             self._save_image(image, output_path)
 
             return GeneratedImage(
+                run_id=request.run_id,
                 provider="google-image",
                 local_path=output_path,
                 metadata={
@@ -112,20 +111,10 @@ class GoogleImageService:
 
     def _build_output_path(self, request: ImageGenerationRequest) -> Path:
         """Create safe output file path for generated image."""
-        self._config.image_output_dir.mkdir(parents=True, exist_ok=True)
+        output_path = request.output_path or (self._config.image_output_dir / f"{request.run_id}.png")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        if request.output_name:
-            filename = request.output_name
-        else:
-            prompt_slug = self._slugify(request.prompt)[:60] or "ambient-still"
-            filename = f"{prompt_slug}-{int(time.time())}.png"
+        if output_path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".webp"}:
+            output_path = output_path.with_suffix(".png")
 
-        if not filename.endswith((".png", ".jpg", ".jpeg", ".webp")):
-            filename = f"{filename}.png"
-
-        return self._config.image_output_dir / filename
-
-    def _slugify(self, value: str) -> str:
-        """Convert prompt into short filesystem-safe slug."""
-        cleaned = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower())
-        return cleaned.strip("-")
+        return output_path

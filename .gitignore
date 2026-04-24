@@ -38,5 +38,6 @@ pip-wheel-metadata/
 
 # Generated videos / frames
 outputs/
+assets/
 temp/
 frames/

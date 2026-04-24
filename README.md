@@ -1,25 +1,38 @@
 # Ambient AI Video App
 
-Internal personal app for generating cosy ambient visuals with Google APIs.
+Internal personal app for generating cosy ambient videos with Google Gen AI and MoviePy.
 
-## Pipeline
+## Full Pipeline
 
-Current app uses Google-only flow:
+Current pipeline:
 
-- generate cosy ambient still image with Google image generation
-- save generated image locally
-- reuse same image as both start and end frame/reference for Google Veo video generation
-- save generated video locally
+1. Generate cosy ambient image with Google image generation.
+2. Use that image as start/end/reference frame for Veo.
+3. Generate short AI video.
+4. Use MoviePy to loop generated short video into 10-minute Full HD video.
+5. Loop background audio from `assets/audio/Daytime Forrest Bonfire.mp3`.
+6. Export final MP4 to `outputs/final/<uuid>.mp4`.
 
-Kling is no longer used.
+## Output Files
 
-MoviePy looping and editing will be added later.
+Each generation run uses one shared UUID.
+
+Image, short video, and final video all share same UUID filename stem:
+
+- `outputs/images/<uuid>.png`
+- `outputs/videos/<uuid>.mp4`
+- `outputs/final/<uuid>.mp4`
+
+Each output type is stored in different folder.
 
 ## Requirements
 
-- Python 3.11+
+- Python 3.11+ recommended
 - local virtual environment
-- `.env` file with Google API settings
+- `.env` file
+- background audio file at `assets/audio/Daytime Forrest Bonfire.mp3`
+
+Background audio file must exist before running app.
 
 ## Setup
 
@@ -58,28 +71,30 @@ Fill `.env` with real values for:
 Run app:
 
 ```bash
-PYTHONPATH=src python -m ai_video_app.main
+python3 src/ai_video_app/main.py
 ```
 
-App will:
+App prints:
 
-- load settings
-- generate cosy ambient still image
-- save image under `outputs/images/`
-- reuse same image as both start and end frame for Veo
-- save video under `outputs/videos/`
-- print saved image path and video path
+- `run_id`
+- image path
+- short video path
+- final video path
 
-## Git-Ignored Local Files
+## Git-Ignored Files
 
-These are ignored by git:
+`.env` is required and is not committed.
 
-- `.env`
-- `venv/`
-- `.venv/`
+Generated outputs are ignored by git:
+
 - `outputs/`
 - `temp/`
 - `frames/`
+
+Local virtual environments are ignored too:
+
+- `venv/`
+- `.venv/`
 
 ## Project Layout
 
@@ -92,4 +107,5 @@ src/
     services/
       google_image_service.py
       veo_service.py
+      final_video_service.py
 ```

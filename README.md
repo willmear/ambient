@@ -1,6 +1,6 @@
 # Ambient AI Video App
 
-Internal personal app for generating cosy ambient videos with Google Gen AI and MoviePy.
+Generate cosy ambient videos with Google Gen AI and MoviePy for more money than it's worth.
 
 ## Full Pipeline
 

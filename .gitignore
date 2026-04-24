@@ -1,14 +1,19 @@
-# Virtual environment
+# Virtual environments
 venv/
-.env/
+.venv/
+env/
 
-# Python cache
+# Python cache / compiled files
 __pycache__/
+*.py[cod]
 *.pyc
 *.pyo
 *.pyd
 
-# Mac
+# Environment files
+.env
+
+# macOS
 .DS_Store
 
 # IDEs
@@ -20,12 +25,18 @@ __pycache__/
 
 # Testing / coverage
 .coverage
+.pytest_cache/
 htmlcov/
 
-# Build
-dist/
+# Build artifacts
 build/
+dist/
+site/
 *.egg-info/
+.eggs/
+pip-wheel-metadata/
 
-# Environment variables
-.env
+# Generated videos / frames
+outputs/
+temp/
+frames/
